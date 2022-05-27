@@ -1,0 +1,403 @@
+3 a) implement k nearest neighbour's classification using 
+
+# Import necessary modules
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+
+# Loading data
+irisData = load_iris()
+
+# Create feature and target arrays
+X = irisData.data
+y = irisData.target
+
+# Split into training and test set
+X_train, X_test, y_train, y_test = train_test_split(
+			X, y, test_size = 0.2, random_state=42)
+
+knn = KNeighborsClassifier(n_neighbors=7)
+
+knn.fit(X_train, y_train)
+
+# Predict on dataset which model has not seen before
+print(knn.predict(X_test))
+
+3b) example of calculating Euclidean distance from math import sqrt
+
+# Example of calculating Euclidean distance
+from math import sqrt
+
+# calculate the Euclidean distance between two vectors
+def euclidean_distance(row1, row2):
+	distance = 0.0
+	for i in range(len(row1)-1):
+		distance += (row1[i] - row2[i])**2
+	return sqrt(distance)
+
+# Test distance function
+dataset = [[2.7810836,2.550537003,0],
+	[1.465489372,2.362125076,0],
+	[3.396561688,4.400293529,0],
+	[1.38807019,1.850220317,0],
+	[3.06407232,3.005305973,0],
+	[7.627531214,2.759262235,1],
+	[5.332441248,2.088626775,1],
+	[6.922596716,1.77106367,1],
+	[8.675418651,-0.242068655,1],
+	[7.673756466,3.508563011,1]]
+row0 = dataset[0]
+for row in dataset:
+	distance = euclidean_distance(row0, row)
+	print(distance)
+  
+3c) implement knn algorithm and plot the result using python
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.colors import ListedColormap
+from sklearn import neighbors, datasets
+
+n_neighbors = 15
+
+# import some data to play with
+iris = datasets.load_iris()
+
+# we only take the first two features. We could avoid this ugly
+# slicing by using a two-dim dataset
+X = iris.data[:, :2]
+y = iris.target
+
+h = 0.02  # step size in the mesh
+
+# Create color maps
+cmap_light = ListedColormap(["orange", "cyan", "cornflowerblue"])
+cmap_bold = ["darkorange", "c", "darkblue"]
+
+for weights in ["uniform", "distance"]:
+    # we create an instance of Neighbours Classifier and fit the data.
+    clf = neighbors.KNeighborsClassifier(n_neighbors, weights=weights)
+    clf.fit(X, y)
+
+    # Plot the decision boundary. For that, we will assign a color to each
+    # point in the mesh [x_min, x_max]x[y_min, y_max].
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+    Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+
+    # Put the result into a color plot
+    Z = Z.reshape(xx.shape)
+    plt.figure(figsize=(8, 6))
+    plt.contourf(xx, yy, Z, cmap=cmap_light)
+
+    # Plot also the training points
+    sns.scatterplot(
+        x=X[:, 0],
+        y=X[:, 1],
+        hue=iris.target_names[y],
+        palette=cmap_bold,
+        alpha=1.0,
+        edgecolor="black",
+    )
+    plt.xlim(xx.min(), xx.max())
+    plt.ylim(yy.min(), yy.max())
+    plt.title(
+        "3-Class classification (k = %i, weights = '%s')" % (n_neighbors, weights)
+    )
+    plt.xlabel(iris.feature_names[0])
+    plt.ylabel(iris.feature_names[1])
+
+plt.show()
+
+4) given the following data,which specify classifications for nine combinations of var1 and var2 predict a classification for a case where var1= 0.906 and var2= 0.606
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def estimate_coef(x, y):
+	# number of observations/points
+	n = np.size(x)
+
+	# mean of x and y vector
+	m_x = np.mean(x)
+	m_y = np.mean(y)
+
+	# calculating cross-deviation and deviation about x
+	SS_xy = np.sum(y*x) - n*m_y*m_x
+	SS_xx = np.sum(x*x) - n*m_x*m_x
+
+	# calculating regression coefficients
+	b_1 = SS_xy / SS_xx
+	b_0 = m_y - b_1*m_x
+
+	return (b_0, b_1)
+
+def plot_regression_line(x, y, b):
+	# plotting the actual points as scatter plot
+	plt.scatter(x, y, color = "m",
+			marker = "o", s = 30)
+
+	# predicted response vector
+	y_pred = b[0] + b[1]*x
+
+	# plotting the regression line
+	plt.plot(x, y_pred, color = "g")
+
+	# putting labels
+	plt.xlabel('x')
+	plt.ylabel('y')
+
+	# function to show plot
+	plt.show()
+
+def main():
+	# observations / data
+	x = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+	y = np.array([1, 3, 2, 5, 7, 8, 8, 9, 10, 12])
+
+	# estimating coefficients
+	b = estimate_coef(x, y)
+	print("Estimated coefficients:\nb_0 = {} \
+		\nb_1 = {}".format(b[0], b[1]))
+
+	# plotting regression line
+	plot_regression_line(x, y, b)
+
+if _name_ == "_main_":
+	main()
+
+5) the following training examples map description of individuals onto high, medium and low credit worthiness
+
+
+
+6) implement linear regression using python
+7a) implement naive bayes theorem to classify the english text
+
+%matplotlib inline
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+from sklearn.datasets import make_blobs
+X, y = make_blobs(100, 2, centers=2, random_state=2, cluster_std=1.5)
+plt.scatter(X[:, 0], X[:, 1], c=y, s=50, cmap='RdBu')
+
+7b) nbt example2
+
+%matplotlib inline
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+from sklearn.datasets import make_blobs
+X, y = make_blobs(100, 2, centers=2, random_state=2, cluster_std=1.5)
+plt.scatter(X[:, 0], X[:, 1], c=y, s=50, cmap='RdBu');
+
+from sklearn.naive_bayes import GaussianNB
+model = GaussianNB()
+model.fit(X, y);
+rng = np.random.RandomState(0)
+Xnew = [-6, -14] + [14, 18] * rng.rand(2000, 2)
+ynew = model.predict(Xnew)
+plt.scatter(X[:, 0], X[:, 1], c=y, s=50, cmap='RdBu')
+lim = plt.axis()
+plt.scatter(Xnew[:, 0], Xnew[:, 1], c=ynew, s=20, cmap='RdBu', alpha=0.1)
+plt.axis(lim);
+yprob = model.predict_proba(Xnew)
+yprob[-8:].round(2)
+
+8) genetic algorithm to evaluate a binary string based on number of 1's in the string
+
+# genetic algorithm to evaluates a binary string based on the number of 1's in the string. 
+# Example: a bitstring with a length of 20 bits will have a score of 20 for 
+# a string of all 1's in the string. (1111111111111111111 = 20, 11111111110000000000 =10)
+
+from numpy.random import randint
+from numpy.random import rand
+
+# objective function
+def onemax(x):
+	return -sum(x)
+ 
+# tournament selection
+def selection(pop, scores, k=3):
+	# first random selection
+	selection_ix = randint(len(pop))
+	for ix in randint(0, len(pop), k-1):
+		# check if better (e.g. perform a tournament)
+		if scores[ix] < scores[selection_ix]:
+			selection_ix = ix
+	return pop[selection_ix]
+ 
+# crossover two parents to create two children
+def crossover(p1, p2, r_cross):
+	# children are copies of parents by default
+	c1, c2 = p1.copy(), p2.copy()
+	# check for recombination
+	if rand() < r_cross:
+		# select crossover point that is not on the end of the string
+		pt = randint(1, len(p1)-2)
+		# perform crossover
+		c1 = p1[:pt] + p2[pt:]
+		c2 = p2[:pt] + p1[pt:]
+	return [c1, c2]
+ 
+# mutation operator
+def mutation(bitstring, r_mut):
+	for i in range(len(bitstring)):
+		# check for a mutation
+		if rand() < r_mut:
+			# flip the bit
+			bitstring[i] = 1 - bitstring[i]
+ 
+# genetic algorithm
+def genetic_algorithm(objective, n_bits, n_iter, n_pop, r_cross, r_mut):
+	# initial population of random bitstring
+	pop = [randint(0, 2, n_bits).tolist() for _ in range(n_pop)]
+	# keep track of best solution
+	best, best_eval = 0, objective(pop[0])
+	# enumerate generations
+	for gen in range(n_iter):
+		# evaluate all candidates in the population
+		scores = [objective(c) for c in pop]
+		# check for new best solution
+		for i in range(n_pop):
+			if scores[i] < best_eval:
+				best, best_eval = pop[i], scores[i]
+				print(">%d, new best f(%s) = %.3f" % (gen,  pop[i], scores[i]))
+		# select parents
+		selected = [selection(pop, scores) for _ in range(n_pop)]
+		# create the next generation
+		children = list()
+		for i in range(0, n_pop, 2):
+			# get selected parents in pairs
+			p1, p2 = selected[i], selected[i+1]
+			# crossover and mutation
+			for c in crossover(p1, p2, r_cross):
+				# mutation
+				mutation(c, r_mut)
+				# store for next generation
+				children.append(c)
+		# replace population
+		pop = children
+	return [best, best_eval]
+ 
+# define the total iterations
+n_iter = 100
+# bits
+n_bits = 20
+# define the population size
+n_pop = 100
+# crossover rate
+r_cross = 0.9
+# mutation rate
+r_mut = 1.0 / float(n_bits)
+# perform the genetic algorithm search
+best, score = genetic_algorithm(onemax, n_bits, n_iter, n_pop, r_cross, r_mut)
+print('Done!')
+print('f(%s) = %f' % (best, score))
+
+9) implement the finite words classification system using back propagation algorithm
+
+from math import exp
+from random import seed
+from random import random
+import matplotlib.pyplot as plt
+ 
+# Initialize a network
+def initialize_network(n_inputs, n_hidden, n_outputs):
+	network = list()
+	hidden_layer = [{'weights':[random() for i in range(n_inputs + 1)]} for i in range(n_hidden)]
+	network.append(hidden_layer)
+	output_layer = [{'weights':[random() for i in range(n_hidden + 1)]} for i in range(n_outputs)]
+	network.append(output_layer)
+	return network
+ 
+# Calculate neuron activation for an input
+def activate(weights, inputs):
+	activation = weights[-1]
+	for i in range(len(weights)-1):
+		activation += weights[i] * inputs[i]
+	return activation
+ 
+# Transfer neuron activation
+def transfer(activation):
+	return 1.0 / (1.0 + exp(-activation))
+ 
+# Forward propagate input to a network output
+def forward_propagate(network, row):
+	inputs = row
+	for layer in network:
+		new_inputs = []
+		for neuron in layer:
+			activation = activate(neuron['weights'], inputs)
+			neuron['output'] = transfer(activation)
+			new_inputs.append(neuron['output'])
+		inputs = new_inputs
+	return inputs
+ 
+# Calculate the derivative of an neuron output
+def transfer_derivative(output):
+	return output * (1.0 - output)
+ 
+# Backpropagate error and store in neurons
+def backward_propagate_error(network, expected):
+	for i in reversed(range(len(network))):
+		layer = network[i]
+		errors = list()
+		if i != len(network)-1:
+			for j in range(len(layer)):
+				error = 0.0
+				for neuron in network[i + 1]:
+					error += (neuron['weights'][j] * neuron['delta'])
+				errors.append(error)
+		else:
+			for j in range(len(layer)):
+				neuron = layer[j]
+				errors.append(expected[j] - neuron['output'])
+		for j in range(len(layer)):
+			neuron = layer[j]
+			neuron['delta'] = errors[j] * transfer_derivative(neuron['output'])
+ 
+# Update network weights with error
+def update_weights(network, row, l_rate):
+	for i in range(len(network)):
+		inputs = row[:-1]
+		if i != 0:
+			inputs = [neuron['output'] for neuron in network[i - 1]]
+		for neuron in network[i]:
+			for j in range(len(inputs)):
+				neuron['weights'][j] += l_rate * neuron['delta'] * inputs[j]
+			neuron['weights'][-1] += l_rate * neuron['delta']
+ 
+# Train a network for a fixed number of epochs
+def train_network(network, train, l_rate, n_epoch, n_outputs):
+	for epoch in range(n_epoch):
+		sum_error = 0
+		for row in train:
+			outputs = forward_propagate(network, row)
+			expected = [0 for i in range(n_outputs)]
+			expected[row[-1]] = 1
+			sum_error += sum([(expected[i]-outputs[i])**2 for i in range(len(expected))])
+			backward_propagate_error(network, expected)
+			update_weights(network, row, l_rate)
+		print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
+ 
+# Test training backprop algorithm
+seed(1)
+dataset = [[2.7810836,2.550537003,0],
+	[1.465489372,2.362125076,0],
+	[3.396561688,4.400293529,0],
+	[1.38807019,1.850220317,0],
+	[3.06407232,3.005305973,0],
+	[7.627531214,2.759262235,1],
+	[5.332441248,2.088626775,1],
+	[6.922596716,1.77106367,1],
+	[8.675418651,-0.242068655,1],
+	[7.673756466,3.508563011,1]]
+n_inputs = len(dataset[0]) - 1
+n_outputs = len(set([row[-1] for row in dataset]))
+network = initialize_network(n_inputs, 2, n_outputs)
+train_network(network, dataset, 0.5, 20, n_outputs)
+for layer in network:
+	print(layer)
